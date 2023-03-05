@@ -17,6 +17,7 @@ struct Set {
     let numberOfTraits: Int
     private var numberOfMatch = 0
     private var indexTopDeck = 0
+    private var gameOver = false
     var cards: [Card]
     var cardsOnBoard: [Card]
     var numberOfSelectedCards : Int {
@@ -98,18 +99,19 @@ struct Set {
                     numberOfMatch += 1
                     for card in cardsTested {
                         let indexReplace = cardsOnBoard.firstIndex(where: {card.id == $0.id})!
-                        print(indexReplace)
                         cardsOnBoard.remove(at: indexReplace)
                         if indexTopDeck < cards.count {
                             cardsOnBoard.insert(cards[indexTopDeck], at: indexReplace)
                             indexTopDeck += 1
-                            print(indexTopDeck)
                         }
                     }
                 } else {
                     for index in cardsOnBoard.indices {
                         cardsOnBoard[index].isSelected = false
                     }
+                }
+                if isDeckEmpty() && !doesMatchExist() {
+                    gameOver = true
                 }
             }
         }
@@ -143,6 +145,30 @@ struct Set {
     
     func getNumberOfMatches() -> Int {
         return numberOfMatch
+    }
+    
+    func doesMatchExist() -> Bool {
+        if cardsOnBoard.count == 3 {
+            return testSet(card1: cardsOnBoard[0], card2: cardsOnBoard[1], card3: cardsOnBoard[2])
+        }
+        if cardsOnBoard.count >= 3 {
+            let numberOfCards = cardsOnBoard.count
+            for index1 in 0..<(numberOfCards-2) {
+                for index2 in (index1+1)..<(numberOfCards-2) {
+                    for index3 in (index2+1)..<numberOfCards {
+                        if testSet(card1: cardsOnBoard[index1], card2: cardsOnBoard[index2], card3: cardsOnBoard[index3]) {
+                            print(index1, index2, index3)
+                            return true
+                        }
+                    }
+                }
+            }
+        }
+        return false
+    }
+    
+    func isGameOver() -> Bool {
+        return gameOver
     }
     
     struct Card: Identifiable {

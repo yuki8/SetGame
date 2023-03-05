@@ -14,6 +14,9 @@ struct ContentView: View {
             HStack {
                 Text("Sets Made:")
                 Text("\(game.model.getNumberOfMatches())")
+                if game.model.isGameOver() {
+                    Text("Game Over").foregroundColor(.red)
+                }
             }.font(.title2)
             AspectVGrid(items: game.model.cardsOnBoard, aspectRatio: 2/3) { card in
                 CardView(card: card, game: game)
@@ -26,25 +29,24 @@ struct ContentView: View {
             .padding(2)
             HStack {
                 Spacer()
-                if game.model.isDeckEmpty() {
+                // If there is no more cards in deck or there is still a match exist,
+                // deal cards button does not work
+                if game.model.isDeckEmpty() || game.model.doesMatchExist() {
                     Button("Deal 3 More Cards", action: {
                         game.model.dealCards()
                     })
                     .foregroundColor(.brown)
-                    //.font(.title)
                     .disabled(true)
                 } else {
                     Button("Deal 3 More Cards", action: {
                         game.model.dealCards()
                     })
-                    //.font(.title)
                     .disabled(false)
                 }
                 Spacer()
                 Button("New Game", action: {
                     game.newGame()
                 })
-                //.font(.title)
                 Spacer()
             }.font(.title2)
         }

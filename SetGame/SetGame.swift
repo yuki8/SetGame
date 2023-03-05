@@ -110,5 +110,7 @@ class SetGame : ObservableObject {
     }
     
     private struct SetGameConstants {
-        static let numberOfTraits = 4    }
+        static let numberOfTraits = 4
+        
+    }
 }
