@@ -15,8 +15,21 @@ enum ThreeKinds: Int, CaseIterable {
 
 struct Set {
     let numberOfTraits: Int
+    private var numberOfMatch = 0
+    private var indexTopDeck = 0
     var cards: [Card]
     var cardsOnBoard: [Card]
+    var numberOfSelectedCards : Int {
+        get {
+            var count = 0
+            for card in cardsOnBoard {
+                if card.isSelected {
+                    count += 1
+                }
+            }
+            return count
+        }
+    }
     
     init(nuberOfTraits: Int = 4) {
         cards = []
@@ -43,8 +56,10 @@ struct Set {
         
         if cards.count < 12 {
             initialNumberOfCardsOnBoard = 9
+            indexTopDeck = 9
         } else {
             initialNumberOfCardsOnBoard = 12
+            indexTopDeck = 12
         }
        
         for index in 0..<initialNumberOfCardsOnBoard{
@@ -68,8 +83,39 @@ struct Set {
         }
     }
     
-    func testSet(card1:Card, card2:Card, card3:Card) -> Bool {
-        print(card1, card2, card3)
+    mutating func choose(card: Card) {
+        for index in 0..<cardsOnBoard.count {
+            if numberOfSelectedCards < 3 && card.id == cardsOnBoard[index].id {
+                cardsOnBoard[index].isSelected.toggle()
+            }
+        }
+        if numberOfSelectedCards == 3 {
+            let cardsTested = cardsOnBoard.filter { card in
+                card.isSelected
+            }
+            if cardsTested.count == 3 {
+                if testSet(card1: cardsTested[0], card2: cardsTested[1], card3: cardsTested[2]) {
+                    numberOfMatch += 1
+                    for card in cardsTested {
+                        let indexReplace = cardsOnBoard.firstIndex(where: {card.id == $0.id})!
+                        print(indexReplace)
+                        cardsOnBoard.remove(at: indexReplace)
+                        if indexTopDeck < cards.count {
+                            cardsOnBoard.insert(cards[indexTopDeck], at: indexReplace)
+                            indexTopDeck += 1
+                            print(indexTopDeck)
+                        }
+                    }
+                } else {
+                    for index in cardsOnBoard.indices {
+                        cardsOnBoard[index].isSelected = false
+                    }
+                }
+            }
+        }
+    }
+    
+    private func testSet(card1:Card, card2:Card, card3:Card) -> Bool {
         for index in 0..<numberOfTraits {
             if (card1.symbol[index] == card2.symbol[index] && card1.symbol[index] == card3.symbol[index]) ||
                 (card1.symbol[index] != card2.symbol[index] && card1.symbol[index] != card3.symbol[index]
@@ -81,10 +127,24 @@ struct Set {
         return true
     }
     
+    func isDeckEmpty() -> Bool {
+        if indexTopDeck < cards.count {
+            return false
+        }
+        return true
+    }
+    
+    mutating func dealCards() {
+        for _ in 0..<3 {
+            cardsOnBoard.append(cards[indexTopDeck])
+            indexTopDeck += 1
+        }
+    }
     
     struct Card: Identifiable {
         var symbol: [ThreeKinds]
         var isMatched = false
+        var isSelected = false
         let id: Int
     }
 }

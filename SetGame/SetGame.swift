@@ -7,11 +7,10 @@
 
 import SwiftUI
 
-class SetGame {
-    let symbolTraits = ["number": 0, "shape": 1, "color": 2, "shade": 3]
+class SetGame : ObservableObject {
     let colors = [Color.red, Color.green, Color.purple]
     let numbers = [1, 2, 3]
-    var model = Set(nuberOfTraits: 5)
+    @Published var model = Set(nuberOfTraits: SetGameConstants.numberOfTraits)
     
     func getNumber(card: Set.Card) -> Int {
         return card.symbol[0].rawValue
@@ -86,7 +85,7 @@ class SetGame {
     }
     
     func getColor(card: Set.Card) -> Color {
-        if card.symbol.count > 2 {
+        if card.symbol.count > 2  {
             switch card.symbol[2] {
             case .one:
                 return colors[0]
@@ -100,4 +99,16 @@ class SetGame {
         }
     }
     
+    // MARK: - Intents
+    
+    func newGame() {
+        model = Set(nuberOfTraits: SetGameConstants.numberOfTraits)
+    }
+    
+    func choose(card : Set.Card) {
+        model.choose(card: card)
+    }
+    
+    private struct SetGameConstants {
+        static let numberOfTraits = 4    }
 }

@@ -8,20 +8,37 @@
 import SwiftUI
 
 struct ContentView: View {
-    var game: SetGame
+    @ObservedObject var game: SetGame
     var body: some View {
         VStack {
             AspectVGrid(items: game.model.cardsOnBoard, aspectRatio: 2/3) { card in
                 CardView(card: card, game: game)
                     .padding(3)
+                    .onTapGesture {
+                        game.model.choose(card: card)
+                    }
             }
             .foregroundColor(.gray)
-            .padding()
-            if game.model.testSet(card1: game.model.cards[0], card2: game.model.cards[1], card3: game.model.cards[2]) {
-                Text("true").foregroundColor(.red)
+            .padding(2)
+            if game.model.isDeckEmpty() {
+                Button("Deal 3 More Cards", action: {
+                    game.model.dealCards()
+                })
+                .foregroundColor(.brown)
+                .font(.largeTitle)
+                .disabled(true)
             } else {
-                Text("False").foregroundColor(.red)
+                Button("Deal 3 More Cards", action: {
+                    game.model.dealCards()
+                })
+                .font(.largeTitle)
+                .disabled(false)
             }
+            Spacer()
+            Button("New Game", action: {
+                game.newGame()
+            })
+                .font(.largeTitle)
         }
     }
 }
@@ -34,8 +51,11 @@ struct CardView: View {
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 10).foregroundColor(.white)
-            RoundedRectangle(cornerRadius: 10).strokeBorder(lineWidth: 3)
-            
+            if !card.isSelected {
+                RoundedRectangle(cornerRadius: 10).strokeBorder(lineWidth: 3)
+            } else {
+                RoundedRectangle(cornerRadius: 10).strokeBorder(lineWidth: 3).foregroundColor(.red)
+            }
             getSymbol()
         }
     }
@@ -44,16 +64,6 @@ struct CardView: View {
     private func getSymbol() -> some View {
         GeometryReader( content: { geometry in
             game.getShapes(card: card, geometry: geometry)
-//            HStack {
-//                Spacer()
-//                game.getShape(card: card, geometry: geometry)
-//                    .foregroundColor(game.getColor(card: card))
-//                game.getShape(card: card, geometry: geometry)
-//                    .foregroundColor(game.getColor(card: card))
-//                game.getShape(card: card, geometry: geometry)
-//                    .foregroundColor(game.getColor(card: card))
-//                Spacer()
-//            }
         })
     }
 }
