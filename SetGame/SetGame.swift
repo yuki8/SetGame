@@ -21,7 +21,7 @@ class SetGame : ObservableObject {
         if getNumber(card: card) == 1 {
             getShape(card: card, geometry: geometry)
         } else if getNumber(card: card) == 2 {
-            HStack {
+            VStack {
                 Spacer()
                 getShape(card: card, geometry: geometry)
                 Spacer(minLength: 0)
@@ -29,7 +29,7 @@ class SetGame : ObservableObject {
                 Spacer()
             }
         } else if getNumber(card: card) == 3 {
-            HStack {
+            VStack {
                 Spacer()
                 getShape(card: card, geometry: geometry)
                 getShape(card: card, geometry: geometry)

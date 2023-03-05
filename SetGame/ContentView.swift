@@ -11,6 +11,10 @@ struct ContentView: View {
     @ObservedObject var game: SetGame
     var body: some View {
         VStack {
+            HStack {
+                Text("Sets Made:")
+                Text("\(game.model.getNumberOfMatches())")
+            }.font(.title2)
             AspectVGrid(items: game.model.cardsOnBoard, aspectRatio: 2/3) { card in
                 CardView(card: card, game: game)
                     .padding(3)
@@ -20,25 +24,29 @@ struct ContentView: View {
             }
             .foregroundColor(.gray)
             .padding(2)
-            if game.model.isDeckEmpty() {
-                Button("Deal 3 More Cards", action: {
-                    game.model.dealCards()
+            HStack {
+                Spacer()
+                if game.model.isDeckEmpty() {
+                    Button("Deal 3 More Cards", action: {
+                        game.model.dealCards()
+                    })
+                    .foregroundColor(.brown)
+                    //.font(.title)
+                    .disabled(true)
+                } else {
+                    Button("Deal 3 More Cards", action: {
+                        game.model.dealCards()
+                    })
+                    //.font(.title)
+                    .disabled(false)
+                }
+                Spacer()
+                Button("New Game", action: {
+                    game.newGame()
                 })
-                .foregroundColor(.brown)
-                .font(.largeTitle)
-                .disabled(true)
-            } else {
-                Button("Deal 3 More Cards", action: {
-                    game.model.dealCards()
-                })
-                .font(.largeTitle)
-                .disabled(false)
-            }
-            Spacer()
-            Button("New Game", action: {
-                game.newGame()
-            })
-                .font(.largeTitle)
+                //.font(.title)
+                Spacer()
+            }.font(.title2)
         }
     }
 }

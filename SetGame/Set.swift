@@ -141,6 +141,10 @@ struct Set {
         }
     }
     
+    func getNumberOfMatches() -> Int {
+        return numberOfMatch
+    }
+    
     struct Card: Identifiable {
         var symbol: [ThreeKinds]
         var isMatched = false
